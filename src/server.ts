@@ -1,7 +1,8 @@
-import express from 'express'
-import cors from 'cors'
-const app = express()
+import dotenv from 'dotenv'
+import app from './app'
+dotenv.config()
+const PORT = process.env.PORT || 8000
 
-app.use(cors)
-
-app.listen(process.env.PORT|| 8000)
+app.listen(PORT , ()=>{
+    console.log('welcome to server!')
+})
