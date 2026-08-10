@@ -1,49 +1,74 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  email    String  @unique
-  password String
-  role     Role
-  avatar   String?
-  order   Order[]
- 
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  avatar    String?
+  isDeleted Boolean  @default(false)
+  orders    Order[]
+  reviews   Review[]
 
   @@map("users")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  isDeleted   Boolean   @default(false)
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  price       Int
+  stock       Int
+  categoryId  String?
+  isDeleted   Boolean   @default(false)
+  category    Category? @relation(fields: [categoryId], references: [id])
+  reviews     Review[]
+
+  @@map("products")
+}
+
+model Review {
+  id        String  @id @default(uuid())
+  rating    Int
+  comment   String?
+  userId    String
+  productId String
+  isDeleted Boolean @default(false)
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@map("reviews")
+}
+
+model Order {
+  id        String  @id @default(uuid())
+  userId    String
+  quantity  Int
+  isDeleted Boolean @default(false)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@map("orders")
 }
 
 enum Role {
   ADMIN
   USER
-}
-
-model Product {
-  id          String @id @default(uuid())
-  title       String
-  description String
-  price       Int
-  stock       Int
-
-  @@map("Products")
-}
-
-model Order {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  quantity Int
 }
