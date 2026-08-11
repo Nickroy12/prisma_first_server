@@ -4,9 +4,9 @@ import { AuthRequest } from "../middleware/auth";
 
 export const createReview = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.id || req.body.userId;
     if (!userId) {
-      res.status(401).json({ success: false, message: "Unauthorized", data: {} });
+      res.status(400).json({ success: false, message: "User ID is required", data: {} });
       return;
     }
 
@@ -23,8 +23,15 @@ export const createReview = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
+    const user = await prisma.user.findUnique({ where: { id: userId, isDeleted: false } });
+    if (!user) {
+      res.status(404).json({ success: false, message: "User with provided User ID not found", data: {} });
+      return;
+    }
+
     const review = await prisma.review.create({
-      data: { rating, comment, productId, userId },
+      data: { rating: Number(rating), comment, productId, userId },
+      include: { user: { select: { id: true, name: true, avatar: true } } },
     });
 
     res.status(201).json({ success: true, message: "Review created successfully", data: review });

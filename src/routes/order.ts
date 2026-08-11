@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { createOrder, getOrders, getOrderById, updateOrder, deleteOrder } from "../services/order.service";
-import { verifyToken } from "../middleware/auth";
+import { verifyToken, optionalAuth } from "../middleware/auth";
 
 const router = Router();
 
-router.post("/", verifyToken, createOrder);
-router.get("/", verifyToken, getOrders);
-router.get("/:id", verifyToken, getOrderById);
-router.patch("/:id", verifyToken, updateOrder);
-router.delete("/:id", verifyToken, deleteOrder);
+router.post("/", optionalAuth, createOrder);
+router.get("/", optionalAuth, getOrders);
+router.get("/:id", optionalAuth, getOrderById);
+router.patch("/:id", optionalAuth, updateOrder);
+router.delete("/:id", optionalAuth, deleteOrder);
 
 export default router;
+

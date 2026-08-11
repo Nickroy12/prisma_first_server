@@ -6,15 +6,16 @@ import {
   updateUser,
   deleteUser,
 } from "../services/user.service";
-import { verifyToken } from "../middleware/auth";
+import { verifyToken, optionalAuth } from "../middleware/auth";
 
 const router = Router();
 
-// Protected routes
+// User routes
 router.post("/", verifyToken, createUser);
-router.get("/", verifyToken, getUsers);
-router.get("/:id", verifyToken, getUserById);
+router.get("/", optionalAuth, getUsers);
+router.get("/:id", optionalAuth, getUserById);
 router.put("/:id", verifyToken, updateUser);
 router.delete("/:id", verifyToken, deleteUser);
 
 export default router;
+

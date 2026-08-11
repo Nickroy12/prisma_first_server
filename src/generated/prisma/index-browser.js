@@ -159,6 +159,7 @@ exports.Prisma.ReviewScalarFieldEnum = {
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  productId: 'productId',
   quantity: 'quantity',
   isDeleted: 'isDeleted'
 };
